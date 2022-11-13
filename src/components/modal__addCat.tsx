@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
+import {ICat} from "../App";
 
-const ModalAddCat = ({isModal, setModal}: any) => {
+const ModalAddCat = ({isModal, setModal, setCats}: any) => {
   const [error, setError] = useState('');
   const [newCat, setNewCat] = useState(
     {
@@ -22,9 +23,13 @@ const ModalAddCat = ({isModal, setModal}: any) => {
       body: JSON.stringify(newCat)
     })
       .then(r => r.json())
-      .then(r=> {
+      .then(r => {
         if (r.message !== 'ok') {
           setError('Скорее всего проблема в ID и он уже занят')
+        } else {
+          // @ts-ignore
+          setCats(p => [...p, newCat])
+          setModal(false)
         }
 
       })
@@ -34,10 +39,10 @@ const ModalAddCat = ({isModal, setModal}: any) => {
     <>
       {isModal &&
         <div className={'z-10 absolute w-full h-full bg-stone-700 top-0 flex items-center justify-center'}
-        onClick={()=>setModal(false)}
+             onClick={() => setModal(false)}
         >
-          <div className={'bg-stone-800 rounded-lg p-4'} onClick={e=>e.stopPropagation()}>
-          {error && <h2 className={'font-bold text-xl'}>{error}</h2>}
+          <div className={'bg-stone-800 rounded-lg p-4'} onClick={e => e.stopPropagation()}>
+            {error && <h2 className={'font-bold text-xl'}>{error}</h2>}
             <div className={'flex flex-col gap-4'}>
               <div className={'grid grid-cols-2 gap-4'}>
                 <label>

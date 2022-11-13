@@ -3,9 +3,8 @@ import './App.css'
 import ModalAddCat from "./components/modal__addCat";
 import ModalEditCat from "./components/modal__editCat";
 import ModalCatPreview from "./components/modal__catPreview";
-import star from './star.svg'
 
-interface ICat {
+export interface ICat {
   id: number,
   age: number,
   name: string,
@@ -24,7 +23,7 @@ const App: FC = () => {
 
 
   useEffect(() => {
-    fetch('  http://sb-cats.herokuapp.com/api/2/nesa402610/show')
+    fetch('http://sb-cats.herokuapp.com/api/2/nesa402610/show')
       .then(r => r.json())
       .then(r => setCats(r.data))
   }, [])
@@ -49,11 +48,11 @@ const App: FC = () => {
 
   return (
     <main>
-      <ModalAddCat isModal={isModal} setModal={setModal}/>
+      <ModalAddCat isModal={isModal} setCats={setCats} setModal={setModal}/>
       <ModalEditCat cats={cats}
                     setCats={setCats}
                     isModal={isModalEdit}
-                    newCat={editCat}
+                    curCat={editCat}
                     setNewCat={setEditCat}
                     setModal={setModalEdit}/>
       {cat && <ModalCatPreview cat={cat} setCat={setCat}/>}
@@ -77,8 +76,9 @@ const App: FC = () => {
               <div className={'flex justify-center'}>
                 <img src={c.img_link} className={'max-h-[250px]'} alt="фото"/>
               </div>}
-            <div>
-              Rate: {c.rate}/10
+            <div className={'flex justify-between p-2'}>
+              <span>Rate: {c.rate}/10</span>
+              <span>{c.favourite ? '♥' : '♡'}</span>
             </div>
           </div>
         )}

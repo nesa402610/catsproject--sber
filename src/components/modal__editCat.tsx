@@ -1,18 +1,38 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 
-const ModalEditCat = ({isModal, setModal, newCat, setNewCat, cats, setCats}: any) => {
+const ModalEditCat = ({isModal, setModal, curCat, setNewCat, cats, setCats}: any) => {
+  const [data, setData] = useState({
+    rate: 0,
+    age: 0,
+    description: '',
+    favourite: false,
+    img_link: '',
+  });
+  useEffect(() => {
+    setData({
+      rate: curCat?.rate,
+      age: curCat?.age,
+      description: curCat?.description,
+      favourite: curCat?.favourite,
+      img_link: curCat?.img_link
+    })
+  }, [curCat])
   const updateCatHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     //Я хз почему не обновляет. Я могу хоть кило тонну аргументов скинуть, но сервер должен взять только нужные
-    fetch('http://sb-cats.herokuapp.com/api/2/nesa402610/update/' + newCat.id, {
+    fetch('http://sb-cats.herokuapp.com/api/2/nesa402610/update/' + curCat.id, {
       method: 'PUT',
-      body: JSON.stringify(newCat)
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(data)
     })
       .then(() => {
         // @ts-ignore
-        const updCats = cats.map(c => c.id === newCat.id ? newCat : c)
+        const updCats = cats.map(c => c.id === curCat.id ? {...curCat, rate: data.rate, age: data.age, description: data.description, favourite: data.favourite, img_link: data.img_link} : c)
         setCats(updCats)
+        setModal(false)
       })
 
   };
@@ -28,34 +48,34 @@ const ModalEditCat = ({isModal, setModal, newCat, setNewCat, cats, setCats}: any
               Возраст
               <input type="text"
                      placeholder={'Возраст'}
-                     value={newCat.age}
-                     onChange={e => setNewCat({...newCat, age: +e.target.value})}/>
+                     value={data?.age}
+                     onChange={e => setData({...data, age: +e.target.value})}/>
             </label>
             <label>
               Рейтинг
               <input type="text"
                      placeholder={'Рейтинг'}
-                     value={newCat.rate}
-                     onChange={e => setNewCat({...newCat, rate: +e.target.value})}/>
+                     value={data?.rate}
+                     onChange={e => setData({...data, rate: +e.target.value})}/>
             </label>
             <label>
               Описание
               <input type="text"
                      placeholder={'Описание'}
-                     value={newCat.description}
-                     onChange={e => setNewCat({...newCat, description: e.target.value})}/>
+                     value={data?.description}
+                     onChange={e => setData({...data, description: e.target.value})}/>
             </label>
             <label>
               Любимый?
-              <input type="checkbox" checked={newCat.favourite}
-                     onChange={e => setNewCat({...newCat, favourite: e.target.checked})}/>
+              <input type="checkbox" checked={data?.favourite}
+                     onChange={e => setData({...data, favourite: e.target.checked})}/>
             </label>
             <label>
               Фото
               <input type="text"
                      placeholder={'Фото'}
-                     value={newCat.img_link}
-                     onChange={e => setNewCat({...newCat, img_link: e.target.value})}/>
+                     value={data?.img_link}
+                     onChange={e => setData({...data, img_link: e.target.value})}/>
             </label>
             <button
               className={'bg-stone-600 p-4 rounded-lg'}
