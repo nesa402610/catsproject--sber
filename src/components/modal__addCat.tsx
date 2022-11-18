@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import {ICat} from "../App";
+import React, {useEffect, useState} from 'react';
 
 const ModalAddCat = ({isModal, setModal, setCats}: any) => {
   const [error, setError] = useState('');
@@ -13,6 +12,16 @@ const ModalAddCat = ({isModal, setModal, setCats}: any) => {
       favourite: false,
       img_link: '',
     })
+  useEffect(() => {
+    if (localStorage.getItem('modalData')) {
+      // @ts-ignore
+      setNewCat(JSON.parse(localStorage.getItem('modalData')))
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem('modalData', JSON.stringify(newCat))
+  }, [newCat]);
+
   const addNewCat = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     fetch('http://sb-cats.herokuapp.com/api/2/nesa402610/add', {
